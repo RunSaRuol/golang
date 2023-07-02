@@ -32,13 +32,17 @@ provider:
       DB_SERVICE: "yairsggo"
       DB_SCHEMA: "yairsggo"
       IS_DEBUG_SQL: true
+      API_KEY: "B5d4JtTU8u1ggV8gp7OF88gcCGxZls6T3f5PYZSa"
+      URL_CREATE_USER: "https://9dowju0rd0.execute-api.us-east-1.amazonaws.com/dev/main/create"
+      URL_CHECK_PHONE: "https://1g1zcrwqhj.execute-api.ap-southeast-1.amazonaws.com/dev/testapi"
+      SECRET_KEY: "golang"
 
 custom:
   apiKeys:
     dev:
-    - name: baitap2
+    - name: baitap3
       usagePlan:
-        name: "baitap2" 
+        name: "baitap3" 
         description: "Description of first plan"
         quota:
           limit: 100000
@@ -88,7 +92,16 @@ functions:
           path: /main/create
           method: post
           cors: true
-
+  checkphone:
+      handler: bin/checkphone
+      package:
+        include:
+          - ./bin/checkphone
+      events:
+        - http:
+            path: /main/checkphone
+            method: post
+            cors: true
   # list:
   #   handler: bin/list
   #   package:

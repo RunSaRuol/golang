@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 type Data struct {
@@ -21,26 +22,29 @@ type Response struct {
 	Result string
 }
 
-func Post(url string, requestId string, phone int) string {
+func Post(url string, bodyReq []byte, authKey string) string {
 	method := "POST"
-	payload := []byte(fmt.Sprintf(`{
-		"requestId":"%s",
-		"data": {
-			"value": %d	
-		}
-	}`, requestId, phone))
+	// payload := []byte(fmt.Sprintf(`{
+	// 	"requestId":"%s",
+	// 	"data": {
+	// 		"value": %d
+	// 	}
+	// }`, requestId, phone))
 
-	client := &http.Client{}
-	req, err := http.NewRequest(method, url, bytes.NewBuffer(payload))
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+	}
+	req, err := http.NewRequest(method, url, bytes.NewBuffer(bodyReq))
 
 	if err != nil {
 		fmt.Println(err)
 		return "INTERNAL SERVER ERROR"
 	}
-	req.Header.Add("x-api-key", "B5d4JtTU8u1ggV8gp7OF88gcCGxZls6T3f5PYZSa")
-	req.Header.Add("Content-Type", "text/plain")
+	req.Header.Add("x-api-key", authKey)
+	req.Header.Add("Content-Type", "application/json")
 
 	res, err := client.Do(req)
+	log.Default().Println("---------------------<<url>> :---------------", url)
 	log.Default().Println("------------------------------res---------------", res)
 	if err != nil {
 		fmt.Println(err)
@@ -51,10 +55,10 @@ func Post(url string, requestId string, phone int) string {
 	responseBody, err := ioutil.ReadAll(res.Body)
 	fmt.Println("CALL API SUCCESS:", string(responseBody))
 	if err != nil {
-		fmt.Println(err)
+		log.Default().Println("------------------------------errr---------------", err)
 		return "Data fail"
 	}
 	//fmt.Println(string(body))
 
-	return "SUCCESS"
+	return string(responseBody)
 }
