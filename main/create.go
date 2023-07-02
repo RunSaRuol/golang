@@ -133,17 +133,20 @@ func CreateUser(ctx context.Context,
 }
 
 func checkUsernameExists(username string) (bool, error) {
+	log.Default().Println("------username ------", username)
+	var count int64
 	db, err := dbconnect.InitPostgres()
-	var user = gohttp.UserDTO{}
-	err = db.Table("ruonnv1").Where("username = ?", username).First(&user).Error
+	err1 := db.Table("ruonnv1").Where("username = ?", username).Count(&count)
 	defer func() {
 		dbIns, _ := db.DB()
 		dbIns.Close()
 	}()
-	if err != nil {
+	log.Default().Println("------err1 ------", err1)
+	if err1 != nil {
 		return false, err
 	}
-	return len(user.Name) > 0, nil
+	log.Default().Println("------count ------", count)
+	return count > 0, nil
 
 }
 func main() {
