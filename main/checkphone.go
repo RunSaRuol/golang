@@ -13,7 +13,6 @@ import (
 	"example.com/m/gohttp"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 )
 
@@ -29,6 +28,10 @@ func getEnv1(key, fallback string) string {
 	}
 	return fallback
 }
+
+var authKey = getEnv1("API_KEY", "B5d4JtTU8u1ggV8gp7OF88gcCGxZls6T3f5PYZSa")
+var urlCreateUser = getEnv1("URL_CREATE_USER", "https://jqsr6098w3.execute-api.us-east-1.amazonaws.com/dev/main/create")
+var urlCheckPhone = getEnv1("URL_CHECK_PHONE", "https://1g1zcrwqhj.execute-api.ap-southeast-1.amazonaws.com/dev/testapi")
 
 func checkphone(ctx context.Context,
 	eventReq events.APIGatewayProxyRequest) (Response, error) {
@@ -52,68 +55,6 @@ func checkphone(ctx context.Context,
 		})
 		return resp, nil
 	}
-	id := uuid.New()
-	if !validate(req.RequestID) {
-		resp.Body = gohttp.ParseResponse(gohttp.HttpResponse{
-			Uuid:    id.String(),
-			Err:     err,
-			Code:    "01",
-			Message: "RequestId is null",
-		})
-		return resp, nil
-	}
-
-	if !validate(req.RequestTime) {
-		resp.Body = gohttp.ParseResponse(gohttp.HttpResponse{
-			Uuid:    id.String(),
-			Err:     err,
-			Code:    "01",
-			Message: "RequestTime is null",
-		})
-		return resp, nil
-	}
-	if !validate(req.Signature) {
-		resp.Body = gohttp.ParseResponse(gohttp.HttpResponse{
-			Uuid:    id.String(),
-			Err:     err,
-			Code:    "01",
-			Message: "Signature is null",
-		})
-		return resp, nil
-	}
-	if !validate(req.Data.Name) {
-		resp.Body = gohttp.ParseResponse(gohttp.HttpResponse{
-			Uuid:    id.String(),
-			Err:     err,
-			Code:    "01",
-			Message: "Name is null",
-		})
-		return resp, nil
-	}
-
-	if !validate(req.Data.Phone) {
-		resp.Body = gohttp.ParseResponse(gohttp.HttpResponse{
-			Uuid:    id.String(),
-			Err:     err,
-			Code:    "01",
-			Message: "Phone is null",
-		})
-		return resp, nil
-	}
-
-	if !validate(req.Data.User) {
-		resp.Body = gohttp.ParseResponse(gohttp.HttpResponse{
-			Uuid:    id.String(),
-			Err:     err,
-			Code:    "01",
-			Message: "User is null",
-		})
-		return resp, nil
-	}
-
-	authKey := getEnv1("API_KEY", "B5d4JtTU8u1ggV8gp7OF88gcCGxZls6T3f5PYZSa")
-	urlCreateUser := getEnv1("URL_CREATE_USER", "https://jqsr6098w3.execute-api.us-east-1.amazonaws.com/dev/main/create")
-	urlCheckPhone := getEnv1("URL_CHECK_PHONE", "https://1g1zcrwqhj.execute-api.ap-southeast-1.amazonaws.com/dev/testapi")
 	//Convert phone string to int
 	phone, err := strconv.Atoi(req.Data.Phone)
 
@@ -213,6 +154,7 @@ func validate(value string) bool {
 	}
 	return true
 }
+
 func main() {
 	lambda.Start(checkphone)
 	// Create(context.Background(), events.APIGatewayProxyRequest{})

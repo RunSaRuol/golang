@@ -36,6 +36,7 @@ provider:
       URL_CREATE_USER: "https://9dowju0rd0.execute-api.us-east-1.amazonaws.com/dev/main/create"
       URL_CHECK_PHONE: "https://1g1zcrwqhj.execute-api.ap-southeast-1.amazonaws.com/dev/testapi"
       SECRET_KEY: "golang"
+      TIME_OUT: 1
 
 custom:
   apiKeys:
@@ -45,11 +46,11 @@ custom:
         name: "baitap3" 
         description: "Description of first plan"
         quota:
-          limit: 100000
-          period: MONTH
+          limit: 1
+          period: DAY
         throttle:
           burstLimit: 100
-          rateLimit: 20
+          rateLimit: 1
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1

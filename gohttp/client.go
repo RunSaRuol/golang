@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 	"time"
 )
 
@@ -23,6 +25,8 @@ type Response struct {
 }
 
 func Post(url string, bodyReq []byte, authKey string) string {
+	timeout := os.Getenv("TIME_OUT")
+	timeoutInt, err := strconv.Atoi(timeout)
 	method := "POST"
 	// payload := []byte(fmt.Sprintf(`{
 	// 	"requestId":"%s",
@@ -32,7 +36,7 @@ func Post(url string, bodyReq []byte, authKey string) string {
 	// }`, requestId, phone))
 
 	client := &http.Client{
-		Timeout: 30 * time.Second,
+		Timeout: time.Duration(timeoutInt) * time.Second,
 	}
 	req, err := http.NewRequest(method, url, bytes.NewBuffer(bodyReq))
 
